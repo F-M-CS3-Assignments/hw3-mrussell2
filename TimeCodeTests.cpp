@@ -131,5 +131,6 @@ int main(){
 	// Many othere test functions...
 	
 	cout << "PASSED ALL TESTS!!!" << endl;
+	cout << "YESSS" << endl;
 	return 0;
 }
