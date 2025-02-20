@@ -17,14 +17,14 @@ TimeCode::TimeCode(const TimeCode& tc){
     t = tc.t;
 }
 
-//set the hours equal to value that is taken in and ensure is non-negative
+//set the hours equal to value that is taken in
 void TimeCode::SetHours(unsigned int hours){
     unsigned int hr, min, sec;
     GetComponents(hr, min, sec);
     t = ComponentsToSeconds(hours, min, sec);
 }
 
-//set the minutes equal to the value that is taken in, ensure minutes is < 60 and not negative
+//set the minutes equal to the value that is taken in, ensure minutes is < 60 
 void TimeCode::SetMinutes(unsigned int minutes){
     unsigned int hr, min, sec;
 
@@ -35,7 +35,7 @@ void TimeCode::SetMinutes(unsigned int minutes){
     GetComponents(hr, min, sec);
     t = ComponentsToSeconds(hr, minutes, sec);
 }
-//set the seconds equal to the value that is taken in, ensure minutes is < 60 and not negative
+//set the seconds equal to the value that is taken in, ensure minutes is < 60
 void TimeCode::SetSeconds(unsigned int seconds){
     unsigned int hr, min, sec;
 
@@ -73,6 +73,7 @@ unsigned int TimeCode::GetSeconds() const{
 }
 
 //GetComponents uses pass by reference to take in hr, min, sec and assign these variables with their correct number
+// takes t and divides by 3600 to get hours, then does t mod 3600 then divides by 60 to get minutes, then t mod 60 to get seconds
 void TimeCode::GetComponents(unsigned int& hr, unsigned int& min, unsigned int& sec) const{
     hr = t/3600;
     min = (t%3600) /60;

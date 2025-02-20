@@ -122,6 +122,8 @@ void TestOperators(){
 	tc2 = tc1 * 0.5;
 	assert(tc2.ToString()=="0:45:0");
 
+	tc2 = tc1 * 0;
+	assert(tc2.ToString()=="0:0:0");
 	
 	tc1 = TimeCode(2,10,15);
 	tc2 = tc1 * 2;
@@ -131,6 +133,12 @@ void TestOperators(){
 	tc1 = TimeCode(6,18, 42);
 	tc2 = tc1 / 6 ; 
 	assert(tc2.ToString()== "1:3:7");
+
+	tc1 = TimeCode(10,18, 42);
+	tc2 = tc1 / 378 ; 
+	assert(tc2.ToString()== "0:1:38");
+
+
 	cout << "PASSED!" << endl << endl;
 
 	cout <<"Testing Comparison Operators" << endl;
@@ -194,6 +202,8 @@ void TestSet()
 	TimeCode tc = TimeCode(8, 5, 9);
 	tc.SetMinutes(15); // test valid change
 	assert(tc.ToString() == "8:15:9");
+	tc.SetMinutes(59); // test valid change
+	assert(tc.ToString() == "8:59:9");
 	try
 	{
 		tc.SetMinutes(80);  // test invalid change
@@ -207,6 +217,9 @@ void TestSet()
 	tc = TimeCode(8, 5, 9);
 	tc.SetHours(15); // test valid change
 	assert(tc.ToString() == "15:5:9");
+
+	tc.SetHours(0); // test valid change
+	assert(tc.ToString() == "0:5:9");
 	
 	cout << "PASSED!" << endl << endl;
 
