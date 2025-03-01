@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <assert.h>
 #include <sstream>
 #include <vector>
 
@@ -14,6 +15,7 @@ vector<string> split(string str, char delim){
     stringstream ss(str);
     string detail;
     while(getline(ss,detail,delim)){
+        
         launchInfo.push_back(detail);
     }
     return launchInfo;
@@ -29,13 +31,34 @@ TimeCode parse_line(string line){
         return TimeCode();
     }
     else{
+        vector<string> MinSec = split(timeVec[4], ':');
+        return TimeCode(stoi(MinSec[0]),stoi(MinSec[1]),0 );
         
     }
-
+    
 }
 
 int main(){
 
-    return 0;
 
+    // Testing Split Function
+    string s = "a,b,c,d,e";
+    vector<string> splitTest = split(s, ',');
+    assert(splitTest.size() == 5);
+    assert(splitTest[0] == "a");
+    assert(splitTest[1] == "b");
+    assert(splitTest[2] == "c");
+    assert(splitTest[3] == "d");
+    assert(splitTest[4] == "e");
+
+    s = "Space Falcon Tesla";
+    splitTest = split(s, ' ');
+    assert(splitTest.size() == 3);
+    assert(splitTest[0] == "Space");
+    assert(splitTest[1] == "Falcon");
+    assert(splitTest[2] == "Tesla");
+
+    cout << "SPLIT TESTS PASSED!" << endl;
+
+return 0;
 }
