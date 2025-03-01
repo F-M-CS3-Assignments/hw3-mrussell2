@@ -25,40 +25,53 @@ vector<string> split(string str, char delim){
 TimeCode parse_line(string line){
     vector<string> launchInfo = split(line, ',');
 
-    string timestr = launchInfo[3];
+
+    string timestr = launchInfo[4];
+    cout << timestr << endl;
     vector<string> timeVec = split(timestr, ' ');
-    if (timeVec.size()<=4){
+
+    for (int i = 0; i< timeVec.size(); i++){
+        cout << timeVec[i] << endl;
+    }
+    if (timeVec.size()<=3){
         return TimeCode();
     }
-    else{
-        vector<string> MinSec = split(timeVec[4], ':');
-        return TimeCode(stoi(MinSec[0]),stoi(MinSec[1]),0 );
-        
-    }
+    vector<string> MinSec = split(timeVec[2], ':');
+    return TimeCode(stoi(MinSec[0]),stoi(MinSec[1]),0 );
     
 }
 
 int main(){
+    cout << "main entered" << endl;
+    ifstream file;
 
+    file.open("Space_Corrected_Short.csv");
 
-    // Testing Split Function
-    string s = "a,b,c,d,e";
-    vector<string> splitTest = split(s, ',');
-    assert(splitTest.size() == 5);
-    assert(splitTest[0] == "a");
-    assert(splitTest[1] == "b");
-    assert(splitTest[2] == "c");
-    assert(splitTest[3] == "d");
-    assert(splitTest[4] == "e");
+    if(!file.is_open()){
+        cout << "Could not open the file" << endl;
+        return 1;
+    }
 
-    s = "Space Falcon Tesla";
-    splitTest = split(s, ' ');
-    assert(splitTest.size() == 3);
-    assert(splitTest[0] == "Space");
-    assert(splitTest[1] == "Falcon");
-    assert(splitTest[2] == "Tesla");
+    vector<TimeCode> Launches;
+    string line; // holds line 
+    getline(file,line); //skips the header line
+    getline(file,line);
+    while(!file.fail()){
+        cout << line << endl;
+        TimeCode tc = parse_line(line);
+        Launches.push_back(tc);
+        cout << tc.ToString() << endl;
+        getline(file,line);
+    }
 
-    cout << "SPLIT TESTS PASSED!" << endl;
+    file.close();
+
+    for (int i = 0; i< Launches.size(); i++){
+        cout << Launches[i].ToString() << endl;
+    }
+
+    
+cout << "SHORT TEST PASSED" << endl;
 
 return 0;
 }
