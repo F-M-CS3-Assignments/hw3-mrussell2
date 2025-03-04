@@ -68,7 +68,6 @@ int main(){
         if (!(tc.GetHours() == 0 && tc.GetMinutes() == 0 && tc.GetSeconds() == 1)) {
             Launches.push_back(tc);
         }
-
         
         
     }
