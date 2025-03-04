@@ -9,9 +9,6 @@
 
 using namespace std;
 
-
-
-
 struct DryingSnapShot {
 	// This is a struct, it's like an object
 	// that doesn't have any methods.
@@ -22,45 +19,48 @@ struct DryingSnapShot {
 	TimeCode *timeToDry;
 };
 
+//get_time_remaining funtion to return the time remaining 
+long long int get_time_remaining(DryingSnapShot dss){ 
 
-long long int get_time_remaining(DryingSnapShot dss){
-	time_t currentTime = time(0);
-    time_t elapsedTime = currentTime - dss.startTime;
-    long long int totalDryTime = dss.timeToDry->GetTimeCodeAsSeconds();
-    long long int remainingTime = totalDryTime - elapsedTime;
+	time_t currentTime = time(0); // get current time
+    time_t elapsedTime = currentTime - dss.startTime; // get elapsed time by subtracting the start time from the current time
+
+    long long int totalDryTime = dss.timeToDry->GetTimeCodeAsSeconds(); // get the total dry time
+    long long int remainingTime = totalDryTime - elapsedTime; // get the remaining time by subtracting the elapsed time from total time
 	long long int zero = 0;  // make a long long int that holds 0, so it can be used in max funtion
-    return max(remainingTime,zero); //ensures that a negative value is never returned 
-}
 
+    return max(remainingTime,zero); //ensures that a negative value is never returned 
+		// return the remaing time
+}
 
 string drying_snap_shot_to_string(DryingSnapShot dss){
 
-	long long int remainingTime = get_time_remaining(dss);
-    TimeCode remaining(0,0,remainingTime);
-      if (remainingTime == 0) {
+	long long int remainingTime = get_time_remaining(dss); // get the time remaining for dss
+
+    TimeCode remaining(0,0,remainingTime);// create TimeCode of remaining time
+      if (remainingTime == 0) { // if the remaining time is 0, then that batch is done drying
         return "Batch-" + dss.name + " (takes " + dss.timeToDry->ToString() + " to dry) DONE!";
-    } else {
-        return "Batch-" + dss.name + " (takes " + dss.timeToDry->ToString() +
-               " to dry) time remaining: " + remaining.ToString();
+
+    } else { // if remaining time is not 0, then the batch is still drying
+        return "Batch-" + dss.name + " (takes " + dss.timeToDry->ToString() + " to dry) time remaining: " + remaining.ToString();
     }
 
 	
 }
 
-//calculate surface area of a sphere
+//calculate surface area of a sphere from given radius
 double get_sphere_sa(double rad){
 	return 4 * M_PI * pow(rad,2);
 	
 }
 
 
-TimeCode *compute_time_code(double surfaceArea){
+TimeCode *compute_time_code(double surfaceArea){ // create time for given surface area
 	long long int dryingSeconds = static_cast<long long int>(surfaceArea);
-    return new TimeCode(0, 0, dryingSeconds);
-	return nullptr;
+    return new TimeCode(0, 0, dryingSeconds); // return time code
 }
 
-
+//testing 
 void tests(){
 	// get_time_remaining
 	DryingSnapShot dss;
@@ -69,19 +69,32 @@ void tests(){
 	dss.timeToDry = &tc;
 	long long int ans = get_time_remaining(dss);
 	assert(ans > 6 && ans < 8);
+
+	
+	dss.startTime = time(0);
+	tc = TimeCode(0, 1, 5);
+	dss.timeToDry = &tc;
+	ans = get_time_remaining(dss);
+	assert(ans > 64 && ans < 66);
 	// add more tests here
 
 
 	// get_sphere_sa
 	double sa = get_sphere_sa(2.0);
 	assert (50.2654 < sa && sa < 50.2655);
-	// add more tests here
+	
+	sa = get_sphere_sa(7.0);
+	assert (615.7520 < sa && sa < 615.7522);
 
 
 	// compute_time_code
 	TimeCode *tc2 = compute_time_code(1.0);
 	//cout << "tc: " << tc.GetTimeCodeAsSeconds() << endl;
 	assert(tc2->GetTimeCodeAsSeconds() == 1);
+	
+
+	tc2 = compute_time_code(64);
+	assert(tc2->GetTimeCodeAsSeconds() == 64);
 	delete tc2;
 
 
@@ -96,6 +109,8 @@ void tests(){
 int main(){
 	vector<DryingSnapShot> batches;
 	char choice;
+	// run tests
+	tests();
 
 	cout << "Choose an option: (A)dd, (V)iew Current Items, (Q)uit: ";
 	while (cin >> choice) {
@@ -147,6 +162,6 @@ int main(){
 	for (DryingSnapShot batch : batches) {
         delete batch.timeToDry;
    		}
-	//tests());
+
 	return 0;
 }
