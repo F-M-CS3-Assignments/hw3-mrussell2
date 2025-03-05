@@ -62,7 +62,7 @@ TimeCode *compute_time_code(double surfaceArea){ // create time for given surfac
 
 //testing 
 void tests(){
-	// get_time_remaining
+	// test get_time_remaining
 	DryingSnapShot dss;
 	dss.startTime = time(0);
 	TimeCode tc = TimeCode(0, 0, 7);
@@ -76,30 +76,37 @@ void tests(){
 	dss.timeToDry = &tc;
 	ans = get_time_remaining(dss);
 	assert(ans > 64 && ans < 66);
-	// add more tests here
+
+	dss.startTime = time(0);
+	tc = TimeCode(1, 1, 3);
+	dss.timeToDry = &tc;
+	ans = get_time_remaining(dss);
+	assert(ans > 3662 && ans < 3664);
+	
 
 
-	// get_sphere_sa
+	// test get_sphere_sa
 	double sa = get_sphere_sa(2.0);
 	assert (50.2654 < sa && sa < 50.2655);
 	
 	sa = get_sphere_sa(7.0);
 	assert (615.7520 < sa && sa < 615.7522);
 
+	sa = get_sphere_sa(14.52);
+	assert (2649.36 < sa && sa < 2649.38);
 
-	// compute_time_code
+
+	// test compute_time_code
 	TimeCode *tc2 = compute_time_code(1.0);
-	//cout << "tc: " << tc.GetTimeCodeAsSeconds() << endl;
 	assert(tc2->GetTimeCodeAsSeconds() == 1);
 	
-
-	tc2 = compute_time_code(64);
+	tc2 = compute_time_code(64.0);
 	assert(tc2->GetTimeCodeAsSeconds() == 64);
-	delete tc2;
 
+	tc2 = compute_time_code(1244.0);
+	assert(tc2->GetTimeCodeAsSeconds() == 1244);
 
-	// add more tests here
-
+	delete tc2; // delete pointer tc2
 
 	cout << "ALL TESTS PASSED!" << endl;
 
@@ -112,35 +119,38 @@ int main(){
 	// run tests
 	tests();
 
+	//prompt user to chose an option
 	cout << "Choose an option: (A)dd, (V)iew Current Items, (Q)uit: ";
-	while (cin >> choice) {
+	while (cin >> choice) { // assign option to char choice
 		// source for learning tolower: https://www.geeksforgeeks.org/tolower-function-in-cpp/ 
 		choice = (char)tolower(choice); // convert input to lowercase so case does not matter
-
+		
+		// check if choice entered is one of the options
 		if (choice == 'a' || choice == 'v' || choice == 'q') {
-
-			if (choice == 'a') {
+			if (choice == 'a') { // if a or add, ask for a radius
 				double r;
 				cout << "Radius: ";
 				cin >> r;
 
+				// calculate surface area based on given radius
 				double surfaceArea = get_sphere_sa(r);
 				TimeCode *dryingTime = compute_time_code(surfaceArea);
 
-				DryingSnapShot newBatch;
+				//create new DryingSnapShot called newBatch
+				DryingSnapShot newBatch; 
 				newBatch.name = to_string(rand()); // Generate random batch ID
-				newBatch.startTime = time(0);
-				newBatch.timeToDry = dryingTime;
+				newBatch.startTime = time(0); // set start time to current time
+				newBatch.timeToDry = dryingTime; // set time to dry for new batch to drying time
 
-				batches.push_back(newBatch);
+				batches.push_back(newBatch); // add new DryingSnapShot to vector batches
 				cout << drying_snap_shot_to_string(newBatch) << endl;
 
 			} 
-			else if (choice == 'v') {
+			else if (choice == 'v') { // if choice is v or view, print each of the DryingSnapShots in batches
 				for (size_t i = 0; i < batches.size(); ) {
 					cout << drying_snap_shot_to_string(batches.at(i)) << endl;
-					if (get_time_remaining(batches.at(i)) == 0) {
-					delete batches.at(i).timeToDry;
+					if (get_time_remaining(batches.at(i)) == 0) { // if time remaining is 0 delethe the batch after printing
+					delete batches.at(i).timeToDry; 
 
 					// source for learing erase funciton for vectors: https://www.geeksforgeeks.org/vector-erase-in-cpp-stl/
 					batches.erase(batches.begin() + i); // Remove finished batch
@@ -148,17 +158,19 @@ int main(){
 					i++; // Only increment if no deletion occurred
 					}
 		}
-				cout << batches.size() << " batches being tracked." << endl;
+				cout << batches.size() << " batches being tracked." << endl; // print number of batches being tracked
 	}
-			else if (choice == 'q') {
+			else if (choice == 'q') { // if choice is q or quit, break the loop
 				break;
 			}
 		}
+		//if choice is not one of options, let the user know and ask to pick a vaild option
 		else{ cout << "Invalid choice. Please enter (A)dd, (V)iew, or (Q)uit." << endl; }
 
         cout << "Choose an option: (A)dd, (V)iew Current Items, (Q)uit: ";
     }
 
+	// delete each DryingSnapShot batch in batches, so storage is freed up after program runs
 	for (DryingSnapShot batch : batches) {
         delete batch.timeToDry;
    		}
